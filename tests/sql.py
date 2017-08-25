@@ -2909,7 +2909,9 @@ class TestConnection(unittest.TestCase):
         db = DAL(DEFAULT_URI, check_reserved=['all'])
         connection = db._adapter.connection
         db.close()
-        self.assertRaises(Exception, connection.commit)
+        if not IS_ORACLE:
+            # newer Oracle versions no longer expect explicit .close()
+            self.assertRaises(Exception, connection.commit)
 
         # check connection are reused with pool_size
         connections = set()
