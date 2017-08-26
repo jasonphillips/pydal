@@ -12,17 +12,15 @@ class OracleParser(BasicParser):
 
     @for_type('text')
     def _text(self, value):
-        return value.read()
+        return value
 
     @for_type('clob')
     def _clob(self, value):
-        return value.read()
+        return value
 
     @for_type('json')
     def _json(self, value):
-        if type(value)==str:
-            return json.loads(value)
-        return json.loads(value.read())
+        return json.loads(value)
 
     @for_type('date')
     def _date(self, value):
