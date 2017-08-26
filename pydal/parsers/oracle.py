@@ -20,6 +20,8 @@ class OracleParser(BasicParser):
 
     @for_type('json')
     def _json(self, value):
+        if type(value)==str:
+            return json.loads(value)
         return json.loads(value.read())
 
     @for_type('date')
