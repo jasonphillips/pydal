@@ -2910,7 +2910,7 @@ class TestConnection(unittest.TestCase):
         connection = db._adapter.connection
         db.close()
         if not IS_ORACLE:
-            # newer Oracle versions no longer expect explicit .close()
+            # newer Oracle versions no longer play well with explicit .close()
             self.assertRaises(Exception, connection.commit)
 
         # check connection are reused with pool_size
@@ -2936,11 +2936,12 @@ class TestConnection(unittest.TestCase):
             c.close()
         db3._adapter.POOLS[DEFAULT_URI] = []
         # Clean close if a connection is broken (closed explicity)
-        for a in range(10):
-            db4 = DAL(DEFAULT_URI, check_reserved=['all'], pool_size=5)
-            db4._adapter.connection.close()
-            db4.close()
-        self.assertEqual(len(db4._adapter.POOLS[DEFAULT_URI]), 0)
+        if not IS_ORACLE:
+            for a in range(10):
+                db4 = DAL(DEFAULT_URI, check_reserved=['all'], pool_size=5)
+                db4._adapter.connection.close()
+                db4.close()
+            self.assertEqual(len(db4._adapter.POOLS[DEFAULT_URI]), 0)
 
 class TestSerializers(DALtest):
 
